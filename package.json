@@ -1,0 +1,23 @@
+{
+  "name": "conjugacao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Louis-yes/conjugacao"
+  },
+  "author": "Louis",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Louis-yes/conjugacao/issues"
+  },
+  "homepage": "https://github.com/Louis-yes/conjugacao",
+  "dependencies": {
+    "axios": "^0.22.0",
+    "cheerio": "^1.0.0-rc.10"
+  }
+}
