@@ -1,0 +1,25 @@
+:root {
+
+    --ordem: #019c37;
+    --e: #fee000;
+    --progreso: #002277;
+
+    --darkgreen: #295f48;
+    --lightgreen: #6ee970;
+
+    --bg: var(--lightgreen);
+    --fg: var(--darkgreen);
+
+    --bg: #fff;
+    --fg: #08130d;
+    
+}
+* { box-sizing: border-box; }
+body { 
+    padding: 30px; 
+}
+body {
+    font-family: sans-serif;
+    background-color: var(--bg);
+    color: var(--fg);
+}
