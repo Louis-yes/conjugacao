@@ -8,12 +8,12 @@ const cc = function(verbo){
         responseEncoding: "binary"
     })
     .then((response) => {
-        resolve(fazerVerbo(verbo, response.data))
+        resolve({result: 200, content: fazerVerbo(verbo, response.data)})
     }).catch((e)=>{
-        console.log(e)
-        reject("hey")
-        // https://www.conjugacao.com.br/busca.php?q=verbo
-        // tenta busca para quisdizer
+      reject(e)
+      // reject({result: 404, content: "verbo não encontrado"});
+      // https://www.conjugacao.com.br/busca.php?q=verbo
+      // tenta busca para quisdizer
     })
   })
   return pp
@@ -21,59 +21,61 @@ const cc = function(verbo){
 
 function fazerVerbo(verbo, data){
     const $ = cheerio.load(data)
-    let vrb = {
-        verbo: verbo,
-        conjugacao: []
-    }
-    vrb.conjugacao = $('.tempos').map((i,t) => {
-        const tempo = {
-            modoconjugacao: $(t).find('.modoconjuga').text(),
-            modo: $(t).find('.modo').text(),
-            tempo_conjugacoes : []
+    function tempos() { return $(`#conjugacao .tempos`) }
+    
+    function temposNoModoIndicativo() { return $(tempos().get(0)).find(".tempo-conjugacao") }
+    function conjugacoesDoModoIndicativo() { return temposNoModoIndicativo().map((i,t) => tirarPessoaisGramaticasDoIndicativo(t)); }
+    function tirarPessoaisGramaticasDoIndicativo(tempo) { return arrayATempo( $(tempo).find(".f").map((i, ccc) => $(ccc).text()).toArray() ) }
+
+    function temposNoModoSubjuntivo() { return $(tempos().get(1)).find(".tempo-conjugacao") }
+    function conjugacoesDoModoSubjuntivo() { return temposNoModoSubjuntivo().map((i,t) => tirarPessoaisGramaticasDoSubjuntivo(t)) }
+    function tirarPessoaisGramaticasDoSubjuntivo(tempo) { return arrayATempo( $(tempo).find(".f").map((i, ccc) => $(ccc).text()).toArray() ) }
+
+    function arrayATempo(arr){
+      if(arr.length != 6) throw('Array tem o tamanho errado')
+      return {
+        singular: {
+          primeira: arr[0],
+          segunda: arr[1],
+          terceira: arr[2]
+        },
+        plural: {
+          primeira: arr[3],
+          segunda: arr[4],
+          terceira: arr[5]
         }
-        tempo.tempo_conjugacoes = $(t).find('.tempo-conjugacao').map((a,b) => {
-            return {
-                title: $(b).find('.tempo-conjugacao-titulo').text()
-            }
-        }).toArray()
-        return tempo
-    }).toArray()
-    return vrb
+      }
+    }
+    
+    const Verbo = {
+      formasImpessoais: {
+        infinitivo: verbo,
+        //gerundio: ,
+        //particípio: ,
+      },
+      formasPessoais: {
+        modoIndicativo: {
+          presente: conjugacoesDoModoIndicativo()[0],
+          pretéritoImperfeito: conjugacoesDoModoIndicativo()[1],
+          pretéritoPerfeito: conjugacoesDoModoIndicativo()[2],
+          pretéritoMaisQuePerfeito: conjugacoesDoModoIndicativo()[3],
+          futuroDoPresente: conjugacoesDoModoIndicativo()[4],
+          futuroDoPréterito: conjugacoesDoModoIndicativo()[5]
+        },
+        modoSubjuntivo: {
+          presente: conjugacoesDoModoSubjuntivo()[0],
+          pretéritoImperfeito: conjugacoesDoModoSubjuntivo()[1],
+          futuro: conjugacoesDoModoSubjuntivo()[2]
+        }
+        // modoImperativo: {
+        //     afirmativo: Tempo,
+        //     negativo: Tempo
+        // }
+        // infinitivo: Tempo
+      }
+    }
+
+    return Verbo
 }
 
 module.exports = cc
-
-// .tempos
-// 	h3.modoconjugo
-// 	.tempo-conjugacao
-// 		h4.tempo-conjugacao-titulo
-// 		p - table of conjugations
-// 			span
-// 				span
-// 					span - grammatical person
-// 					span.f - verb conjugation
-
-/** 
-tempos:
-[
-  {
-    modoconjugo: title,
-    tempo-conjugacoes: [
-      {
-        tempo: tempo-conjugacao-titulo
-        conjugacoes: [
-          { 
-            pessoa gramatical: "eu",
-            conjugacao: "canto",
-            irregular: false
-          }
-        ]
-        }
-        ]
-      }
-    ]
-    
-  }
-]
-
-**/
