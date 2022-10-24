@@ -3,19 +3,15 @@ import { useState, useEffect } from 'react'
 import AddVerbForm from "../components/AddVerbForm"
 import VerbCard from '../components/VerbCard'
 
+type VerbEntry = {
+    verb: string
+    group: string
+}
 
 function HomePage() {
     const [listaDeErros, setListaDeErros] = useState([])
     const [verbos, setVerbos] = useState<any[]>([])
-    const [pedidos, setPedidos] = useState<String[]>([])
-
-    function pedidosCB (verbos:string[]){
-        return setPedidos(verbos)
-    }
-    function errosCB (error) {
-        const novosErros = [...listaDeErros, error.verbo + ' - não achado']
-        setListaDeErros(novosErros)
-    }
+    const [verbEntries, setVerbEntries] = useState<VerbEntry[]>([])
 
     function agregarVerboNovo(verbo){
         const newv = [...verbos, verbo]
@@ -25,6 +21,11 @@ function HomePage() {
         } else {
             console.log('hey')
         }
+    }
+
+    function selectVerbHandler(verb:string){
+        const newVerb = {verb, group: "indicative/present"}
+        setVerbEntries([...verbEntries, newVerb])
     }
 
     useEffect(() => {
@@ -41,12 +42,15 @@ function HomePage() {
             <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         </Head>
         <div className="sidebar">
-            <AddVerbForm pedidos={pedidosCB} confirmados={agregarVerboNovo} erros={errosCB}></AddVerbForm>
+            <AddVerbForm selectVerb={selectVerbHandler}></AddVerbForm>
         </div>
         <div className="main">
             <ul className='cards'>
-                {verbos.map(v => {
-                    return <li key={v.word}><VerbCard verb={v}></VerbCard></li>
+                {/* {verbEntries.map(v => {
+                    return <li key={v.verb}><VerbCard verb={v}></VerbCard></li>
+                })} */}
+                {verbEntries.map((v,i) => {
+                    return <li key={i}>{v.verb}</li>
                 })}
             </ul>
         </div>

@@ -1,9 +1,8 @@
+import { version } from "os";
 import { useState } from "react";
 
 type Props = {
-    pedidos: (verbos:string[]) => void;
-    confirmados: (verbo:any) => void;
-    erros: (error:any) => void;    
+    selectVerb: (verb:string) => void;
 }
 
 type error = {
@@ -11,46 +10,59 @@ type error = {
     quizDizeres ?: string[];
 }
 
-export default function AddVerbForm({pedidos, confirmados, erros}:Props){
-    const [verbo, setVerbo] = useState("");
-
-    function manageErrors(response) { 
-        if (!response.ok) { 
-               if (response.status == 404){ 
-                      throw Error(response.statusText); 
-                }
-               return ; // will print '200 - ok'
-         }
-        return response;
-    }
+export default function AddVerbForm({selectVerb}:Props){
+    const [input, setInput] = useState("");
+    const [allVerbs, addToAllVerbs] = useState({});
+    const [verbOptions, setVerbOptions] = useState([])
 
     function handleSubmit(e) {
         e.preventDefault();
-        // for each verb fetch it's definition
-        // push into verb array
-        const listaVerbos = verbo.split(',');
-        pedidos(listaVerbos)
-        listaVerbos.forEach(v => {
-            // check local store
-            // else
-            const first = v[0]
-            fetch(`verb-data/json/portuguese/content/${first}/${v}.json`).then(manageErrors).then(res => res.json()).then((vv) => {
-                confirmados(vv);         
-            }).catch(err => {
-                const error = {
-                    verbo:v
-                }
-                erros(error);
-            });
+    }
+
+    function onChange(e){
+        const text = e.target.value
+        setInput(text);
+        if(text.length < 2) { 
+            setVerbOptions([]) 
+        } else {
+            filterVerbOptions(text);
+        }
+    }
+
+    function filterVerbOptions(text){
+        const firstLetter = text[0];
+        getOptions(firstLetter).then(options => {
+            setVerbOptions(options.filter(v => v.substring(0, text.length) == text))
         })
     }
-    function verbChange(e){
-        setVerbo(e.target.value);
+
+    function getOptions(letter): Promise<string[]> {
+        return new Promise((resolve, reject) => {
+            if(allVerbs[letter]){
+                resolve(allVerbs[letter])
+            } else {
+                fetch(`portuguese/categories/${letter}.json`).then(res => res.json()).then(options => {
+                    const nv = allVerbs;
+                    nv[letter] = options;
+                    addToAllVerbs(nv);
+                    resolve(options);
+                })
+            }
+        })
     }
+
+    function setSelectedVerb(verb){
+        selectVerb(verb);
+    }
+
     return (
-        <form onSubmit={handleSubmit} className="add-verb">
-            <input name="verbos" type="text" onChange={verbChange}/>
-            <input className="conjugar" type="submit" value="conjugar" />
-        </form>
+        <div className="add-verb">
+            <form onSubmit={handleSubmit}>
+                <input name="verbs" type="text" onChange={onChange}/>
+            </form>
+            <ul className="verblist">
+                {verbOptions.map(v => <li key={v} className="verb" onClick={() => setSelectedVerb(v)}>{v}</li>)}
+            </ul>
+        </div>
     )
 }
