@@ -5,11 +5,6 @@ type Props = {
     selectVerb: (verb:string) => void;
 }
 
-type error = {
-    verbo: string;
-    quizDizeres ?: string[];
-}
-
 export default function AddVerbForm({selectVerb}:Props){
     const [input, setInput] = useState("");
     const [allVerbs, addToAllVerbs] = useState({});
@@ -20,7 +15,7 @@ export default function AddVerbForm({selectVerb}:Props){
     }
 
     function onChange(e){
-        const text = e.target.value
+        const text = e.target.value.toLowerCase()
         setInput(text);
         if(text.length < 2) { 
             setVerbOptions([]) 
@@ -58,8 +53,11 @@ export default function AddVerbForm({selectVerb}:Props){
     return (
         <div className="add-verb">
             <form onSubmit={handleSubmit}>
-                <input name="verbs" type="text" onChange={onChange}/>
+                <input name="verbs" type="text" onChange={onChange} placeholder="começa com ..."/>
             </form>
+            <p className="list-label">
+                    {!!verbOptions.length && `verbos que começam com "${input}..."`}
+            </p>
             <ul className="verblist">
                 {verbOptions.map(v => <li key={v} className="verb" onClick={() => setSelectedVerb(v)}>{v}</li>)}
             </ul>
