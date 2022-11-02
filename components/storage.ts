@@ -10,6 +10,10 @@ export function getVerb(verb:string){
             if (v) {
                 resolve(v)
             } else {
+                if(! verb) { 
+                    reject(v);
+                    return;
+                }
                 let fl = verb.substring(0,1)
                 fetch(`portuguese/content/${fl}/${verb}.json`).then(res => res.json()).then(w => {
                     verbs.setItem(verb, w)

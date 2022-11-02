@@ -12,8 +12,10 @@
     --bg: var(--lightgreen);
     --fg: var(--darkgreen);
 
-    --bg: #fff;
+    --bg: #f0f0f0;
     --fg: #08130d;
+
+    --light-blue: #88d7f8;
 }
 
 $bp: 800px;
@@ -23,20 +25,20 @@ $topmenu: 50px;
 
 html, body {
     font-family: sans-serif;
-    background-color: #f0f0f0;
+    background-color: var(--bg);
     color: var(--color);
 }
 
 .sidebar {
-    left: 200px;
-    top: $topmenu;
+    top: 20px;
+    left: 0;
     width: 100%;
-    padding: 20px;    
+    padding: 20px; 
+    position: fixed;
+    z-index: 2;
     @media screen and (min-width: $bp) {
-        position: fixed;
         width: 203px;
         bottom: 0;
-
     }
 }
 
@@ -49,7 +51,7 @@ html, body {
         height: 40px;
         width: 100%;
         padding: 7px 9px;
-        background: none;
+        background: var(--bg);
     }
 
     .list-label {
@@ -59,7 +61,7 @@ html, body {
     .verblist {
         list-style: none;
         padding: 0;
-
+        
         .verb {
             background-color: var(--color);
             width: max-content;
@@ -69,13 +71,16 @@ html, body {
             border-radius: 3px;
             color: var(--bg);
             cursor: pointer;
-            &:hover {
+            &:hover, &.selected {
                 transform: translateY(-1px);
+            }
+            &.selected {
+                color: var(--light-blue);
             }
 
             @media screen and (min-width: $bp){
                 display: block;
-                &:hover {
+                &:hover, &.selected {
                     transform: translateX(1px);
                 }
             }
@@ -87,25 +92,43 @@ html, body {
     overflow: auto;
     right: 0;
     top: 0;
-    // top: $topmenu;
     bottom: 0;
-    left: 403px;
+    left: 203px;
     // right: 310px;
-    padding: 50px 0;
+    padding: 90px 0;
+    &.blur-main {
+        filter: blur(4px)
+    }
     @media screen and (min-width: $bp){
         position: fixed;
+        padding: 16px 0;
+
+        &.blur-main {
+            filter: none;
+        }    
     }
 }
 
 .cards {
     list-style: none;
-    padding: 0 0 30px 20px;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    padding: 10px;
+    gap: 10px;
+    grid-template-columns: auto;
+
+    @media screen and (min-width: 500px) {
+        grid-template-columns: auto auto;
+
+    } 
+    @media screen and (min-width: $bp){
+        display: flex;
+        flex-wrap: wrap;
+    }
     li {
         flex: 50%;
         flex-grow: 0;
         @media screen and (min-width: $bp){
+            padding: 0 0 30px 20px;
             flex: 0
         }        
     }
@@ -114,7 +137,6 @@ html, body {
 .card {
     position: relative;
     display: block;
-    margin-right: 10px;
     margin-bottom: 10px;
     padding:  21px 19px;
     @media screen and (min-width: $bp){
@@ -151,7 +173,7 @@ html, body {
         padding:0;
         cursor: pointer;
         &:hover {
-            color: red;
+            color: var(--light-blue);
         }
     }
 

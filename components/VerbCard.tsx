@@ -28,7 +28,7 @@ export default function VerbCard(props:props){
             },{}))
             setVerb(vv)
         })    
-    }, [])
+    }, [props.verb])
     
     function selectChange(e){
         setTense(e.target.value)

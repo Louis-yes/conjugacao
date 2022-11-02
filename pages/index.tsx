@@ -13,10 +13,11 @@ function HomePage() {
     const [verbos, setVerbos] = useState<any[]>([])
     const [verbEntries, setVerbEntries] = useState<VerbEntry[]>([])
     const [collectionTitle, setCollectionTitle] = useState("untitled")
+    const [blurMain, toggleBlurMain] = useState(false)
 
     function selectVerbHandler(verb:string){
         const newVerb = {verb, group: "indicative/present"}
-        saveVerbEntries([...verbEntries, newVerb])
+        saveVerbEntries([newVerb, ...verbEntries])
     }
 
     function saveVerbEntries(newVerbEntries){
@@ -33,6 +34,10 @@ function HomePage() {
     function removeVerb(i){
         let nv = verbEntries.filter((v,ii) => i !== ii)
         saveVerbEntries(nv)
+    }
+
+    function formFocus(focus){
+        toggleBlurMain(focus)
     }
 
     useEffect(() => {
@@ -60,9 +65,9 @@ function HomePage() {
             <link href="favicon.ico" rel="shortcut icon"></link>
         </Head>
         <div className="sidebar">
-            <AddVerbForm selectVerb={selectVerbHandler}></AddVerbForm>
+            <AddVerbForm selectVerb={selectVerbHandler} toggleFocus={formFocus}></AddVerbForm>
         </div>
-        <div className="main">
+        <div className={["main", blurMain ? "blur-main" : ""].join(" ")}>
         {!!verbEntries.length && (
             <ul className='cards'>
                 {verbEntries.map((v,i) => {

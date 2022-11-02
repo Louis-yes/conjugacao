@@ -1,24 +1,36 @@
 import { version } from "os";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type Props = {
     selectVerb: (verb:string) => void;
+    toggleFocus: (focus:boolean) => void;
 }
 
-export default function AddVerbForm({selectVerb}:Props){
+export default function AddVerbForm({selectVerb, toggleFocus}:Props){
     const [input, setInput] = useState("");
     const [allVerbs, addToAllVerbs] = useState({});
-    const [verbOptions, setVerbOptions] = useState([])
+    const [verbOptions, setVerbOptions] = useState([]);
+    const [selected, setSelected] = useState(-1)
+
+    const inputEl = useRef();
 
     function handleSubmit(e) {
         e.preventDefault();
+
+        setSelectedVerb(verbOptions[selected < 0 ? 0 : selected]);
+        setVerbOptions([]);
+        toggleFocus(false);
+        setInput('');
+        setSelected(-1);
+        (inputEl.current as HTMLInputElement).value = '';
     }
 
     function onChange(e){
         const text = e.target.value.toLowerCase()
         setInput(text);
         if(text.length < 2) { 
-            setVerbOptions([]) 
+            setVerbOptions([])
+            toggleFocus(false);
         } else {
             filterVerbOptions(text);
         }
@@ -29,6 +41,7 @@ export default function AddVerbForm({selectVerb}:Props){
         getOptions(firstLetter).then(options => {
             setVerbOptions(options.filter(v => v.substring(0, text.length) == text))
         })
+        toggleFocus(true);
     }
 
     function getOptions(letter): Promise<string[]> {
@@ -46,20 +59,37 @@ export default function AddVerbForm({selectVerb}:Props){
         })
     }
 
+    function handleKeyPress(e){
+        switch(e.key){
+            case 'ArrowUp': 
+                setSelected(selected < 1 ? verbOptions.length - 1 : selected - 1);
+                break;
+            case 'ArrowDown':
+                setSelected(selected == verbOptions.length - 1 ? 0 : selected + 1);
+                break;
+        }
+    }
+
     function setSelectedVerb(verb){
+        if(!verb) return;
+        setVerbOptions([]);
+        toggleFocus(false);
+        setInput('');
+        setSelected(-1);
+        (inputEl.current as HTMLInputElement).value = '';
         selectVerb(verb);
     }
 
     return (
         <div className="add-verb">
             <form onSubmit={handleSubmit}>
-                <input name="verbs" type="text" onChange={onChange} placeholder="começa com ..."/>
+                <input name="verbs" type="text" onChange={onChange} ref={inputEl} onKeyDown={handleKeyPress} placeholder="começa com ..."/>
             </form>
             <p className="list-label">
                     {!!verbOptions.length && `verbos que começam com "${input}..."`}
             </p>
             <ul className="verblist">
-                {verbOptions.map(v => <li key={v} className="verb" onClick={() => setSelectedVerb(v)}>{v}</li>)}
+                {verbOptions.map((v,i) => <li key={v} className={["verb", i == selected ? 'selected' : ''].join(' ')} onClick={() => setSelectedVerb(v)}>{v}</li>)}
             </ul>
         </div>
     )
