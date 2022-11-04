@@ -1,4 +1,4 @@
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { getVerb } from "./storage"
 import { verb, conjugation } from "../types/verb"
 import { VerbEntry } from "../types/appTypes"
@@ -10,9 +10,10 @@ type props = {
 }
 
 export default function VerbCard(props:props){
-    const [verb, setVerb] = useState<verb>()
-    const [tense, setTense] = useState(props.verb.group)
-    let [conjugations, setConjugations] = useState({})
+    const [verb, setVerb] = useState<verb>();
+    const [tense, setTense] = useState(props.verb.group);
+    const select = useRef();
+    let [conjugations, setConjugations] = useState({});
 
     useEffect(() => {
         getVerb(props.verb.verb).then((vv:verb) => {
@@ -25,10 +26,12 @@ export default function VerbCard(props:props){
                     a[c.group][plural][person] = c.value;
                 }
                 return a
-            },{}))
-            setVerb(vv)
+            },{}));
+            setVerb(vv);
+            setTense(props.verb.group);
+            if(select.current) (select.current as HTMLSelectElement).value = props.verb.group; 
         })    
-    }, [props.verb])
+    }, [props.verb]);
     
     function selectChange(e){
         setTense(e.target.value)
@@ -72,7 +75,7 @@ export default function VerbCard(props:props){
 
         return (
             <article>
-            <select onChange={selectChange} defaultValue={tense}>
+            <select onChange={selectChange} defaultValue={tense} ref={select}>
                 {Object.keys(conjugations).filter(k => {
                     return  k !== 'gerund'
                             && k !== 'infinitive/impersonal'
