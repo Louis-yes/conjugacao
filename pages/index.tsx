@@ -58,18 +58,18 @@ function HomePage() {
     }, []);
 
     return( 
-    <div className="sans-serif pa3 debug">
+    <div className="sans-serif text-black bg-slate-50 debug">
         <Head>
             <title>Conjugação</title>
             <meta name="viewport" content="initial-scale=1.0, width=device-width,  maximum-scale=1.0, user-scalable=0" />
             <link href="favicon.ico" rel="shortcut icon"></link>
         </Head>
-        <div className="sidebar">
+        <div className="w-100">
             <AddVerbForm selectVerb={selectVerbHandler} toggleFocus={formFocus}></AddVerbForm>
         </div>
         <div className={["main", blurMain ? "blur-main" : ""].join(" ")}>
         {!!verbEntries.length && (
-            <ul className='cards'>
+            <ul className='cards grid grid-cols-3'>
                 {verbEntries.map((v,i) => {
                     return <li key={i}><VerbCard verb={v} groupSelect={g => verbGroupUpdate(i, g)} onRemove={() => removeVerb(i)}></VerbCard></li>
                 })}
@@ -83,7 +83,7 @@ function HomePage() {
 
         </div>
         {/* <Editor collection={verbEntries}></Editor> */}
-        <p className='logotype'>
+        <p className='logotype fixed bottom-2 right-2 font-bold'>
             Conjugação
         </p>
     </div>

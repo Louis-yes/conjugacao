@@ -38,30 +38,27 @@ export default function VerbCard(props:props){
         props.groupSelect(e.target.value)
     }
 
-    function conjugationSection(){
+    function row(subjectPronoun, conjugation){
+        return (<tr><td className="pr-5">{subjectPronoun}</td><td>{conjugation}</td></tr>)
+    }
 
+    function conjugationTable(tense){
+        return [
+            ["Eu", conjugations[tense]['singular'][0]],
+            ["Tu", conjugations[tense]['singular'][1]],
+            ["Você", conjugations[tense]['singular'][2]],
+            ["Nós", conjugations[tense]['plural'][0]],
+            ["Vós", conjugations[tense]['plural'][1]],
+            ["Eles", conjugations[tense]['plural'][2]],
+        ]
+    }
+
+    function conjugationSection(){
         function hasforms(){
             return (
-                <table>
+                <table className="table-fixed mt-2">
                 <tbody>
-                    <tr>
-                        <td>Eu</td><td>{conjugations[tense]['singular'][0]}</td>
-                    </tr>
-                    <tr>
-                        <td>Tu</td><td>{conjugations[tense]['singular'][1]}</td>
-                    </tr>
-                    <tr>
-                        <td>Você</td><td>{conjugations[tense]['singular'][2]}</td>
-                    </tr>
-                    <tr>
-                        <td>Nós</td><td>{conjugations[tense]['plural'][0]}</td>
-                    </tr>
-                    <tr>
-                        <td>Vós</td><td>{conjugations[tense]['plural'][1]}</td>
-                    </tr>
-                    <tr>
-                        <td>Eles</td><td>{conjugations[tense]['plural'][2]}</td>
-                    </tr>
+                    {conjugationTable(tense).map(cc => {return row(cc[0],cc[1])})}
                 </tbody>
             </table>
             )
@@ -75,7 +72,7 @@ export default function VerbCard(props:props){
 
         return (
             <article>
-            <select onChange={selectChange} defaultValue={tense} ref={select}>
+            <select className="py-2 px-3 w-full bg-slate-50 select appearance-none" onChange={selectChange} defaultValue={tense} ref={select}>
                 {Object.keys(conjugations).filter(k => {
                     return  k !== 'gerund'
                             && k !== 'infinitive/impersonal'
@@ -90,10 +87,10 @@ export default function VerbCard(props:props){
     }
 
     return (
-    <div className="card">
-        <h1>{props.verb.verb}</h1>
-        <span className="controls">
-            <button className="remove" onClick={props.onRemove as MouseEventHandler}>
+    <div className="card relative p-3 drop-shadow bg-white m-3">
+        <h1 className="font-bold">{props.verb.verb}</h1>
+        <span className="">
+            <button className="remove absolute top-3 right-3" onClick={props.onRemove as MouseEventHandler}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                     <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                 </svg>
