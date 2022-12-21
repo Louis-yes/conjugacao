@@ -92,7 +92,7 @@ export default function AddVerbForm({selectVerb, toggleFocus}:Props){
                     {!!verbOptions.length && `verbos que começam com "${input}..."`}
             </p>
             <ul className="verblist w-full">
-                {verbOptions.map((v,i) => <li key={v} className={["verb", i == selected ? 'text-blue-400' : '', "inline-block p-1 px-2 bg-black text-white mr-1 mb-1 rounded hover:text-blue-400 cursor-pointer"].join(' ')} onClick={() => setSelectedVerb(v)}>{v}</li>)}
+                {verbOptions.map((v,i) => <li key={i} className={["verb", i == selected ? 'text-blue-400' : '', "inline-block p-1 px-2 bg-black text-white mr-1 mb-1 rounded hover:text-blue-400 cursor-pointer"].join(' ')} onClick={() => setSelectedVerb(v)}>{v}</li>)}
             </ul>
         </div>
     )

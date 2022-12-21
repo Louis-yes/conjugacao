@@ -69,9 +69,9 @@ function HomePage() {
         </div>
         <div className={["main", blurMain ? "blur-main" : ""].join(" ")}>
         {!!verbEntries.length && (
-            <ul className='cards grid grid-cols-3'>
+            <ul className='cards'>
                 {verbEntries.map((v,i) => {
-                    return <li key={i}><VerbCard verb={v} groupSelect={g => verbGroupUpdate(i, g)} onRemove={() => removeVerb(i)}></VerbCard></li>
+                    return <li key={i}><VerbCard verb={v.verb} group={v.group} groupSelect={g => verbGroupUpdate(i, g)} onRemove={() => removeVerb(i)}></VerbCard></li>
                 })}
             </ul>)
         }
