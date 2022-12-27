@@ -2,7 +2,6 @@ import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { getVerb } from "./storage"
 import { verb, verbType, form, mood, tense, grammaticalPerson, grammaticalNumber, conjugation } from "../utils/verb"
 import makeVerb from "../utils/verb";
-import { VerbEntry } from "../types/appTypes"
 
 type props = {
     verb: string
